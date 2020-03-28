@@ -1,0 +1,164 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <ctime>
+#include <cctype>
+
+using namespace std;
+
+int main()
+{
+	//setup
+	const int MAX_WRONG = 8; //Maximum incorrect guesses allowed
+	string userName;
+	bool playAgain = true;
+	// Create an int var to count the number of simulations being run starting at 1
+	int simulation = 0;
+	int right = 0;
+	int incorrect = 0;
+
+	// Display Title of the program to the user
+	cout << "\n\t\t\t***Welcome to the Inquisition training program\n\n";
+
+	// Ask the recruit to log in using their name
+	cout << "Please enter your username.\n";
+	// Hold the recruit's name in a var, and address them by it throughout the simulation.
+	cin >> userName;
+	// Display an overview of what Keywords II is to the recruit 
+	cout << "The objective of this training program is to guess the secret word.\n";
+	// Display directions to the recruit on how to use Keywords
+	cout << "To do this you will be shown how many letters are in the word. You can guess one letter at a time to see if that letter is in the word.\n";
+	cout << "You will have 8 incorrect guesses before loosing.\n";
+	// Create a collection of 10 words you had written down manually
+		//collection of possible words to guess
+	vector<string> words;
+	words.push_back("XENOS");
+	words.push_back("HERITIC");
+	words.push_back("MUTANT");
+	words.push_back("IMPERIUM");
+	words.push_back("ROSETTE");
+	words.push_back("WITCH");
+	words.push_back("EXTERMINATUS");
+	words.push_back("CHAOS");
+	words.push_back("SANCTION");
+	words.push_back("INQUISITION");
+
+
+	while (playAgain == true)
+	{
+		srand(static_cast<unsigned int>(time(0)));
+		random_shuffle(words.begin(), words.end());
+
+		const string THE_WORD = words[0];			  //word to guess
+		int wrong = 0;								  //number of incorrect guesses
+		string soFar(THE_WORD.size(), '-'); //word guessed so far
+		string used = "";							  //letters already guessed
+
+
+
+
+			//     Increment the number of simulations ran counter
+			// Display the simulation # is starting to the recruit.
+		simulation++;
+		cout << "\nwSimulation number: " << simulation << endl;
+		//Pick new 3 random words from your collection as the secret code word the recruit has to guess. 
+		// While recruit hasn’t made too many incorrect guesses and hasn’t guessed the secret word
+		while ((wrong < MAX_WRONG) && (soFar != THE_WORD))
+		{
+			//     Tell recruit how many incorrect guesses he or she has left
+			cout << userName << " You have " << (MAX_WRONG - wrong);
+			cout << " incorrect guesses left.\n";
+
+			//     Show recruit the letters he or she has guessed
+			cout << "\nYou've used the following letters:\n" << used << endl;
+
+			//     Show player how much of the secret word he or she has guessed
+			cout << "\nSo far, the word is:\n" << soFar << endl;
+
+			//     Get recruit's next guess
+			char guess;
+			cout << userName << " enter your guess: ";
+			cin >> guess;
+			guess = toupper(guess); //Make uppercase since secret word is in uppercase
+
+			//     While recruit has entered a letter that he or she has already guessed
+			while (used.find(guess) != string::npos)
+			{
+				cout << userName << " you've already guessed " << guess << endl;
+				//          Get recruit ’s guess
+				cout << "Enter your guess: ";
+				cin >> guess;
+				guess = toupper(guess);
+			}
+			//     Add the new guess to the group of used letters
+			used += guess;
+
+			//     If the guess is in the secret word
+			//          Tell the recruit the guess is correct
+			if (THE_WORD.find(guess) != string::npos)
+			{
+				cout << "Thats right! " << guess << " is in the word.\n";
+
+				//          Update the word guessed so far with the new letter
+				for (int i = 0; i < THE_WORD.length(); ++i)
+				{
+					if (THE_WORD[i] == guess)
+					{
+						soFar[i] = guess;
+					}
+				}
+			}
+			//     Otherwise
+			//          Tell the recruit the guess is incorrect
+			else
+			{
+				cout << "Sorry, " << guess << " isn't in the word.\n";
+				//          Increment the number of incorrect guesses the recruit has made		
+				++wrong;
+			}
+		}
+		// If the recruit has made too many incorrect guesses
+		//     Tell the recruit that he or she has failed the Keywords II course.
+		if (wrong == MAX_WRONG)
+		{
+			cout << userName << " You failed to guess the word.\n";
+			cout<< "The word was " << THE_WORD << endl;
+			incorrect++;
+		}
+		// Otherwise
+		//     Congratulate the recruit on guessing the secret words
+		else
+		{
+			cout << userName << "\ you guessed it!";
+			cout << "\nThe word was " << THE_WORD << endl;
+			right++;
+		}
+
+		//After guessing three words the program ends and asks if the player wants to try again
+		if (simulation == 3) 
+		{
+			// Ask the recruit if they would like to run the simulation again
+			// If the recruit wants to run the simulation again
+			cout << userName << " would you like to play again? type 'y' or 'n'\n";
+			char answer;
+			cin >> answer;
+
+			//     Move program execution back up to // Display the simulation # is starting to the recruit. 
+			// Otherwise 
+			if (answer != 'y')
+			{
+				playAgain = false;
+				cout << "\nThanks for playing " << userName << endl;
+				simulation = 0;
+			}
+		}
+	}
+	//     Display End of Simulations to the recruit
+	cout << userName << ": you correctly guessed " << right << " words.\n";
+	cout << "You missed " << incorrect << " words\n";
+
+	//     Pause the Simulation with press any key to continue
+	system("pause");
+	return 0;
+}
